@@ -1,93 +1,86 @@
-import 'react-native-gesture-handler';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, TextInput, Keyboard, View, Button, clicked } from 'react-native';
-import { createDrawerNavigator } from '@react-navigation/drawer';
-//import { ListItem, SearchBar } from "react-native-elements";
-import { Feather, Entypo } from "@expo/vector-icons";
-import { NavigationContainer } from '@react-navigation/native';
-import Animated, {
-    useSharedValue,
-    withTiming,
-    useAnimatedStyle,
-    Easing,
-} from 'react-native-reanimated';
-import { SearchBar } from 'react-native-screens';
+import { StyleSheet, Text, View, FlatList, Button, Alert } from "react-native";
+import React, { useState, useEffect } from "react";
+import { CustomerService } from "../Service/CustomerService";
 
 export default function HomeScreen({ navigation }) {
+  const [customerData, setCustomerData] = useState([]);
 
-    return (
-        <View style={styles.container}>
+  useEffect(() => {
+    setCustomerData(CustomerService.getAllCustomerData());
+  }, []);
 
-            <View style={
-                clicked
-                    ? styles.searchBar__clicked
-                    : styles.searchBar__unclicked
-            }>
-                {/* search Icon */}
-
-                <Feather
-                    name="search"
-                    size={20}
-                    color="black"
-                    style={{ marginLeft: 1 }}
-                />
-                {/* Input field */}
-                <TextInput
-                    style={styles.input}
-                    placeholder="Search"
-                />
-
-                {/* cross Icon, depending on whether the search bar is clicked or not */}
-
-                {clicked && (
-                    <Entypo name="cross" size={20} color="black" style={{ padding: 1 }} />
-                )}
-            </View>
-            {/* cancel button, depending on whether the search bar is clicked or not */}
-
-            {clicked && (
-                <View>
-                    <Button
-                        title='Cancle'
-                        onPress={() => {
-                            Keyboard.dismiss();
-                        }}></Button>
-                </View>
-            )}
+  const renderItem = ({ item }) => (
+    <View style={styles.listItem}>
+      <View style={styles.listDetailsSection}>
+        <View style={styles.listNameSection}>
+          <Text style={styles.listFont}>{item.rollNo}</Text>
+          <Text style={[styles.listFont, styles.listName]} numberOfLines={1}>
+            {item.name}
+          </Text>
         </View>
+        <View style={styles.listAmountSection}>
+          <Text style={styles.listFont2}>Amount : {item.amount}</Text>
+        </View>
+      </View>
+      <Button
+        title="Enter"
+        onPress={() => Alert.alert("Simple Button pressed")}
+      />
+    </View>
+  );
+
+  const separator = () => {
+    return (
+      <View
+        style={{
+          height: 1,
+          width: "100%",
+          backgroundColor: "#000",
+        }}
+      />
     );
-};
+  };
+
+  return (
+    <View style={styles.container}>
+      <FlatList
+        data={customerData}
+        renderItem={renderItem}
+        keyExtractor={(item) => item._id}
+        ItemSeparatorComponent={separator}
+      />
+    </View>
+  );
+}
 
 const styles = StyleSheet.create({
-    container: {
-        margin: 15,
-        justifyContent: "flex-start",
-        alignItems: "center",
-        flexDirection: "row",
-        width: "90%",
-    },
-
-    searchBar__unclicked: {
-        padding: 10,
-        flexDirection: "row",
-        width: "95%",
-        backgroundColor: "#d9dbda",
-        borderRadius: 15,
-        alignItems: "center",
-    },
-
-    searchBar__clicked: {
-        padding: 10,
-        flexDirection: "row",
-        width: "80%",
-        backgroundColor: "#d9dbda",
-        borderRadius: 15,
-        alignItems: "center",
-        justifyContent: "space-evenly",
-    },
-    input: {
-        fontSize: 20,
-        marginLeft: 10,
-        width: "90%",
-    },
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    alignItems: "stretch",
+    justifyContent: "center",
+  },
+  listItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-evenly",
+    padding:5
+  },
+  listAmountSection:{
+    paddingVertical:5
+  },
+  listNameSection: {
+    flexDirection: "row",
+  },
+  listFont: {
+    fontSize: 22,
+  },
+  listFont2: {
+    fontSize: 16,
+  },
+  listName: {
+    paddingRight: 10,
+    paddingLeft: 10,
+    width: 200,
+  },
 });
