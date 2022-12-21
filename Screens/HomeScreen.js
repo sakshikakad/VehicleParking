@@ -18,12 +18,15 @@ export default function HomeScreen({ navigation }) {
   const [customerData, setCustomerData] = useState([]);
   // to filter that data
   const [filteredData, setFilteredData] = useState([]);
+  //reload
+  const [isReload, setIsReload] = useState(false);
 
   // useEffect to call the service to get all data while loading the page
   useEffect(() => {
     setCustomerData(CustomerService.getAllCustomerData());
     setFilteredData(CustomerService.getAllCustomerData());
-  }, []);
+    setIsReload(false);
+  }, [isReload]);
 
   // function used to filter the data
   const onSearchTextChange = (txt) => {
@@ -32,6 +35,26 @@ export default function HomeScreen({ navigation }) {
     });
     setFilteredData(filteredList);
   };
+
+  // confirmation alert
+  const createTwoButtonAlert = (item) =>
+    Alert.alert(
+      "Add Entry",
+      "Add Entry for " + item.name + "\n" + "Balance : " + item.amount,
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: () => {
+            CustomerService.addEntry(item);
+            setIsReload(true);
+          },
+        },
+      ]
+    );
 
   // ui of item in the list
   const renderItem = ({ item }) => (
@@ -44,13 +67,10 @@ export default function HomeScreen({ navigation }) {
           </Text>
         </View>
         <View style={styles.listAmountSection}>
-          <Text style={styles.listFont2}>Amount : {item.amount}</Text>
+          <Text style={styles.listFont2}>Balance : {item.amount}</Text>
         </View>
       </View>
-      <Button
-        title="Enter"
-        onPress={() => Alert.alert("Simple Button pressed")}
-      />
+      <Button title="Enter" onPress={() => createTwoButtonAlert(item)} />
     </View>
   );
 
