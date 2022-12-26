@@ -58,8 +58,15 @@ const dummyCustomerData = [
 ];
 
 export class CustomerService {
+  // get all customer data
   static getAllCustomerData() {
     return dummyCustomerData;
+  }
+
+  // add customer
+  static addCustomer(customer){
+    customer._id = "6393ea6262dda1a2b8cb2f20"
+    dummyCustomerData.push(customer);
   }
 
   // Add entry

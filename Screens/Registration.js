@@ -1,80 +1,87 @@
-import 'react-native-gesture-handler';
-import React, { useState } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button, TextInput, Alert } from 'react-native';
-import PostData from '../Models/Post';
-import { createDrawerNavigator } from '@react-navigation/drawer';
-import { NavigationContainer } from '@react-navigation/native';
-import Animated, {
-    useSharedValue,
-    withTiming,
-    useAnimatedStyle,
-    Easing,
-} from 'react-native-reanimated';
+import "react-native-gesture-handler";
+import React, { useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  TextInput,
+  Alert,
+  TouchableWithoutFeedback,
+  Keyboard
+} from "react-native";
+import Customer from "../Models/Customer";
+import { CustomerService } from "../Service/CustomerService";
 
-export default function RegistrationScreen({ navigation }) {
+export default function RegistrationScreen() {
+  const [rollNoText, setRollNo] = useState();
+  const [nameText, setName] = useState();
+  const [amountText, setAmount] = useState();
 
-    const [rollNoText, setRollNo] = useState();
-    const [nameText, setName] = useState();
-    const [amountText, setAmount] = useState();
+  const CreateRegisDB = () => {
+    var c = new Customer();
+    c.rollNo = rollNoText;
+    c.name = nameText;
+    c.amount = amountText;
 
+    CustomerService.addCustomer(c);
 
-    const CreateRegisDB = () => {
+    Alert.alert("Registration successful");
+    setRollNo("");
+    setName("");
+    setAmount("");
+  };
 
-        var p = new PostData();
-        p.rollNo = rollNoText;
-        p.name = nameText;
-        p.amount = amountText;
+  return (
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <View style={styles.container} onPress={() => Keyboard.dismiss()}>
+        <Text style={styles.label}>Roll No :</Text>
+        <TextInput
+          style={styles.input}
+          onChangeText={(newText) => setRollNo(newText)}
+          placeholder="Enter Roll No"
+          value={rollNoText}
+        />
+        <Text style={styles.label}>Name :</Text>
+        <TextInput
+          style={styles.input}
+          onChangeText={(newText) => setName(newText)}
+          placeholder="Enter Name"
+          value={nameText}
+        />
+        <Text style={styles.label}>Amount :</Text>
+        <TextInput
+          style={styles.input}
+          onChangeText={(newText) => setAmount(newText)}
+          placeholder="Enter Amount"
+          value={amountText}
+          keyboardType="decimal-pad"
+        />
 
-        fetch('http://192.168.43.75:3000/api/posts', {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(p)
-        })
-            .then((response) => response.json())
-            .catch((error) => console.error(error))
-            .finally(() => { });
-
-        Alert.alert("Registration successful");
-    };
-    return (
-        <View style={styles.container}>
-
-            <TextInput
-                style={styles.input} onChangeText={newText => setRollNo(newText)}
-                placeholder="Enter Roll No."
-            />
-
-            <TextInput
-                style={styles.input} onChangeText={newText => setName(newText)}
-                placeholder="Enter Name"
-            />
-            <TextInput
-                style={styles.input} onChangeText={newText => setAmount(newText)}
-                placeholder="Enter Amount"
-            />
-
-            <Button title='Register' onPress={CreateRegisDB} />
-            <StatusBar style="auto" />
-        </View>
-    );
+        <Button title="Register" onPress={CreateRegisDB} />
+      </View>
+    </TouchableWithoutFeedback>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'space-evenly',
-    },
-
-    input: {
-        borderWidth: 1,
-        height: 40,
-        width: 200,
-        marginRight: 20,
-    },
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
+    padding: 10,
+  },
+  input: {
+    borderWidth: 1,
+    height: 40,
+    width: "90%",
+    padding: 5,
+    fontSize: 22,
+    marginBottom: 30,
+  },
+  label: {
+    fontSize: 22,
+    marginBottom: 10,
+  },
 });

@@ -6,20 +6,21 @@ import {
   Button,
   Alert,
   clicked,
-  TextInput,
-  Keyboard,
+  TextInput
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { CustomerService } from "../Service/CustomerService";
-import { Feather, Entypo } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 
 export default function HomeScreen({ navigation }) {
   // this variable is used to store the all customer data
   const [customerData, setCustomerData] = useState([]);
   // to filter that data
   const [filteredData, setFilteredData] = useState([]);
-  //reload
+  // reload
   const [isReload, setIsReload] = useState(false);
+  // search value
+  const [searchTxt, setSearchTxt] = useState("");
 
   // useEffect to call the service to get all data while loading the page
   useEffect(() => {
@@ -30,6 +31,7 @@ export default function HomeScreen({ navigation }) {
 
   // function used to filter the data
   const onSearchTextChange = (txt) => {
+    setSearchTxt(txt);
     var filteredList = customerData.filter((item) => {
       return item.rollNo.indexOf(txt) > -1;
     });
@@ -51,6 +53,7 @@ export default function HomeScreen({ navigation }) {
           onPress: () => {
             CustomerService.addEntry(item);
             setIsReload(true);
+            onSearchTextChange(searchTxt);
           },
         },
       ]
@@ -107,6 +110,7 @@ export default function HomeScreen({ navigation }) {
         <TextInput
           style={styles.input}
           placeholder="Search"
+          value={searchTxt}
           onChangeText={onSearchTextChange}
         />
       </View>
