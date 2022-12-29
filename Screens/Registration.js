@@ -8,7 +8,7 @@ import {
   TextInput,
   Alert,
   TouchableWithoutFeedback,
-  Keyboard
+  Keyboard,
 } from "react-native";
 import Customer from "../Models/Customer";
 import { CustomerService } from "../Service/CustomerService";
@@ -23,6 +23,7 @@ export default function RegistrationScreen() {
     c.rollNo = rollNoText;
     c.name = nameText;
     c.amount = amountText;
+    c.date = new Date();
 
     CustomerService.addCustomer(c);
 

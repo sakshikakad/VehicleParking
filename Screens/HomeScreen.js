@@ -6,7 +6,7 @@ import {
   Button,
   Alert,
   clicked,
-  TextInput
+  TextInput,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { CustomerService } from "../Service/CustomerService";
@@ -24,9 +24,11 @@ export default function HomeScreen({ navigation }) {
 
   // useEffect to call the service to get all data while loading the page
   useEffect(() => {
-    setCustomerData(CustomerService.getAllCustomerData());
-    setFilteredData(CustomerService.getAllCustomerData());
-    setIsReload(false);
+    CustomerService.getAllCustomerData().then((data) => {
+      setCustomerData(data);
+      setFilteredData(data);
+      setIsReload(false);
+    });
   }, [isReload]);
 
   // function used to filter the data
@@ -120,6 +122,8 @@ export default function HomeScreen({ navigation }) {
         renderItem={renderItem}
         keyExtractor={(item) => item._id}
         ItemSeparatorComponent={separator}
+        onRefresh={() => setIsReload(true)}
+        refreshing={isReload}
       />
     </View>
   );
