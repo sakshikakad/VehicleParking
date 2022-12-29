@@ -1,38 +1,33 @@
-import 'react-native-gesture-handler';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button } from 'react-native';
-import { createDrawerNavigator } from '@react-navigation/drawer';
-import { NavigationContainer } from '@react-navigation/native';
-import Animated, {
-  useSharedValue,
-  withTiming,
-  useAnimatedStyle,
-  Easing,
-} from 'react-native-reanimated';
+import "react-native-gesture-handler";
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import { NavigationContainer } from "@react-navigation/native";
+import HomeScreen from "./Screens/HomeScreen";
+import RegistrationScreen from "./Screens/Registration";
+import UpdateScreen from "./Screens/Update";
+import EntryScreen from "./Screens/EntrySheet";
 
-import HomeScreen from './Screens/HomeScreen';
-import RegistrationScreen from './Screens/Registration';
-import StudentInfoScreen from './Screens/StudentInfo';
-import UpdateScreen from './Screens/UpdateStuInfo';
-import DeleteScreen from './Screens/DeleteInfo';
-import EntryScreen from './Screens/EntrySheet';
+import { createStackNavigator } from "@react-navigation/stack";
 
-
+const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
 export default function App() {
+  const MyStack = () => {
+    return (
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Update" component={UpdateScreen} />
+      </Stack.Navigator>
+    );
+  };
+
   return (
     <NavigationContainer>
       <Drawer.Navigator initialRouteName="Home">
-        <Drawer.Screen name="Home" component={HomeScreen} />
+        <Drawer.Screen name="Pay-n-Park" component={MyStack} />
         <Drawer.Screen name="Registration" component={RegistrationScreen} />
-        <Drawer.Screen name="Students Info" component={StudentInfoScreen} />
-        <Drawer.Screen name="Update Students Info" component={UpdateScreen} />
-        <Drawer.Screen name="Inactive Account" component={DeleteScreen} />
         <Drawer.Screen name="Entry Sheet" component={EntryScreen} />
       </Drawer.Navigator>
     </NavigationContainer>
   );
 }
-
-

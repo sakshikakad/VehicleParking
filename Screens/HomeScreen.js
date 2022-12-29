@@ -11,6 +11,7 @@ import {
 import React, { useState, useEffect } from "react";
 import { CustomerService } from "../Service/CustomerService";
 import { Feather } from "@expo/vector-icons";
+import { useIsFocused } from "@react-navigation/native";
 
 export default function HomeScreen({ navigation }) {
   // this variable is used to store the all customer data
@@ -21,6 +22,8 @@ export default function HomeScreen({ navigation }) {
   const [isReload, setIsReload] = useState(false);
   // search value
   const [searchTxt, setSearchTxt] = useState("");
+  // to refresh every time we get on the screen
+  const isFocused = useIsFocused();
 
   // useEffect to call the service to get all data while loading the page
   useEffect(() => {
@@ -29,7 +32,7 @@ export default function HomeScreen({ navigation }) {
       setFilteredData(data);
       setIsReload(false);
     });
-  }, [isReload]);
+  }, [isReload, isFocused]);
 
   // function used to filter the data
   const onSearchTextChange = (txt) => {
@@ -53,8 +56,7 @@ export default function HomeScreen({ navigation }) {
         {
           text: "OK",
           onPress: () => {
-            CustomerService.addEntry(item);
-            setIsReload(true);
+            CustomerService.addVehicleEntry(item);
             onSearchTextChange(searchTxt);
           },
         },
@@ -66,16 +68,21 @@ export default function HomeScreen({ navigation }) {
     <View style={styles.listItem}>
       <View style={styles.listDetailsSection}>
         <View style={styles.listNameSection}>
-          <Text style={styles.listFont}>{item.rollNo}</Text>
           <Text style={[styles.listFont, styles.listName]} numberOfLines={1}>
-            {item.name}
+            {item.rollNo} {item.name}
           </Text>
         </View>
         <View style={styles.listAmountSection}>
           <Text style={styles.listFont2}>Balance : {item.amount}</Text>
         </View>
       </View>
-      <Button title="Enter" onPress={() => createTwoButtonAlert(item)} />
+      <View>
+        <Button
+          title="Update"
+          onPress={() => navigation.navigate("Update", { customerId: item._id })}
+        />
+        <Button title="Enter" onPress={() => createTwoButtonAlert(item)} />
+      </View>
     </View>
   );
 
@@ -142,6 +149,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-evenly",
     padding: 5,
   },
+  listDetailsSection: {
+    width: "70%",
+  },
   listAmountSection: {
     paddingVertical: 5,
   },
@@ -155,9 +165,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   listName: {
-    paddingRight: 10,
-    paddingLeft: 10,
-    width: 200,
+    width: "100%",
   },
   searchBar__unclicked: {
     padding: 10,
